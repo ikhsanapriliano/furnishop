@@ -3,6 +3,7 @@ package delivery
 import (
 	"fmt"
 	"furnishop/server/config"
+	"furnishop/server/delivery/controller"
 	"furnishop/server/delivery/middleware"
 	"furnishop/server/manager"
 	"furnishop/server/util/common"
@@ -20,6 +21,9 @@ type Server struct {
 
 func (s *Server) setupControllers() {
 	s.engine.Use(middleware.NewLogMiddleware(s.logService).LogRequest())
+	rg := s.engine.Group("/api/v1")
+
+	controller.NewProductCategoryController(s.uc.ProductCategoryUseCase(), rg).Router()
 }
 
 func (s *Server) Run() {
