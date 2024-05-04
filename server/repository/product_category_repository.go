@@ -12,7 +12,7 @@ type ProductCategoryRepository interface {
 	GetById(id string) (model.ProductCategory, error)
 	GetAll() ([]model.ProductCategory, error)
 	Update(data model.ProductCategory, payload dto.ProductCategoryDto) (model.ProductCategory, error)
-	Delete(payload model.ProductCategory) (bool, error)
+	Delete(payload model.ProductCategory) error
 }
 
 type productCategoryRepository struct {
@@ -57,13 +57,13 @@ func (p *productCategoryRepository) Update(data model.ProductCategory, payload d
 	return data, nil
 }
 
-func (p *productCategoryRepository) Delete(payload model.ProductCategory) (bool, error) {
+func (p *productCategoryRepository) Delete(payload model.ProductCategory) error {
 	err := p.db.Delete(&payload).Error
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return nil
 }
 
 func NewProductCategoryRepository(db *gorm.DB) ProductCategoryRepository {

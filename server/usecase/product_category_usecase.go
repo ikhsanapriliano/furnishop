@@ -13,7 +13,7 @@ type ProductCategoryUseCase interface {
 	GetById(id string) (model.ProductCategory, error)
 	GetAll() ([]model.ProductCategory, error)
 	Update(id string, payload dto.ProductCategoryDto) (model.ProductCategory, error)
-	Delete(id string) (bool, error)
+	Delete(id string) error
 }
 
 type productCategoryUseCase struct {
@@ -52,12 +52,12 @@ func (p *productCategoryUseCase) GetAll() ([]model.ProductCategory, error) {
 }
 
 func (p *productCategoryUseCase) Update(id string, payload dto.ProductCategoryDto) (model.ProductCategory, error) {
-	data, err := p.GetById(id)
+	data, err := p.repo.GetById(id)
 	if err != nil {
 		return model.ProductCategory{}, err
 	}
 
-	newData, err := p.Update(data.Id, payload)
+	newData, err := p.repo.Update(data, payload)
 	if err != nil {
 		return model.ProductCategory{}, err
 	}
@@ -65,18 +65,18 @@ func (p *productCategoryUseCase) Update(id string, payload dto.ProductCategoryDt
 	return newData, nil
 }
 
-func (p *productCategoryUseCase) Delete(id string) (bool, error) {
-	data, err := p.GetById(id)
+func (p *productCategoryUseCase) Delete(id string) error {
+	data, err := p.repo.GetById(id)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	result, err := p.repo.Delete(data)
+	err = p.repo.Delete(data)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return result, nil
+	return nil
 }
 
 func NewProductCategoryUseCase(repo repository.ProductCategoryRepository) ProductCategoryUseCase {
